@@ -63,56 +63,53 @@ const images = [
       description: "Lighthouse Coast Sea",
     },
   ];
-
   const gallery = document.querySelector(".gallery");
-
-  images.forEach(({ preview, original, description }, index) => {
+  const galleryItems = images.map(({ preview, original, description }) => {
     const galleryItem = document.createElement("li");
     galleryItem.classList.add("gallery-item");
-
+  
     const galleryLink = document.createElement("a");
     galleryLink.classList.add("gallery-link");
     galleryLink.href = original;
-
+  
     const galleryImage = document.createElement("img");
     galleryImage.classList.add("gallery-image");
     galleryImage.src = preview;
     galleryImage.alt = description;
     galleryImage.dataset.source = original;
-
+  
     galleryLink.appendChild(galleryImage);
     galleryItem.appendChild(galleryLink);
-    gallery.appendChild(galleryItem);
+  
+    return galleryItem;
   });
-
-  gallery.addEventListener("click", onGalleryClick);
-
-
-function onGalleryClick(event) {
-  event.preventDefault(); 
-
-  if (event.target.nodeName !== "IMG") {
-    return;
-  }
-  const largeImageSrc = event.target.dataset.source;
-
-  console.log(largeImageSrc);
-}
-
-// Додаємо обробник подій для кожного елемента галереї
-const galleryItems = document.querySelectorAll('.gallery-item');
-
-galleryItems.forEach(item => {
-  item.addEventListener('click', event => {
+  
+  gallery.append(...galleryItems);
+  
+  let instance = null;
+  
+  function onGalleryClick(event) {
     event.preventDefault();
-    const source = event.currentTarget.querySelector('.gallery-image').getAttribute('data-source');
-
-    const instance = basicLightbox.create(`
-      <img src="${source}" width="800" height="600">
+  
+    if (event.target.nodeName !== "IMG") {
+      return;
+    }
+    const largeImageSrc = event.target.dataset.source;
+  
+    instance = basicLightbox.create(`
+      <img src="${largeImageSrc}" width="800" height="600">
     `);
-
+  
     instance.show();
-  });
-});
-
-
+  
+    window.addEventListener("keydown", onEscapePress);
+  }
+  
+  function onEscapePress(event) {
+    if (event.key === "Escape" && instance) {
+      instance.close();
+      window.removeEventListener("keydown", onEscapePress);
+    }
+  }
+  
+  gallery.addEventListener("click", onGalleryClick);
