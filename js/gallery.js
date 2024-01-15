@@ -63,7 +63,10 @@ const images = [
       description: "Lighthouse Coast Sea",
     },
   ];
+  
+
   const gallery = document.querySelector(".gallery");
+
   const galleryItems = images.map(({ preview, original, description }) => {
     const galleryItem = document.createElement("li");
     galleryItem.classList.add("gallery-item");
@@ -94,6 +97,7 @@ const images = [
     if (event.target.nodeName !== "IMG") {
       return;
     }
+  
     const largeImageSrc = event.target.dataset.source;
   
     instance = basicLightbox.create(`
@@ -102,13 +106,13 @@ const images = [
   
     instance.show();
   
-    window.addEventListener("keydown", onEscapePress);
+    // Додаємо обробник події для клавіші Escape на об'єкт document
+    document.addEventListener("keydown", onEscapePress);
   }
   
   function onEscapePress(event) {
     if (event.key === "Escape" && instance) {
       instance.close();
-      window.removeEventListener("keydown", onEscapePress);
     }
   }
   
