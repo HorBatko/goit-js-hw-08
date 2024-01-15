@@ -64,7 +64,6 @@ const images = [
     },
   ];
   
-
   const gallery = document.querySelector(".gallery");
 
   const galleryItems = images.map(({ preview, original, description }) => {
@@ -100,20 +99,26 @@ const images = [
   
     const largeImageSrc = event.target.dataset.source;
   
+    if (instance) {
+      instance.close();
+    }
+  
     instance = basicLightbox.create(`
       <img src="${largeImageSrc}" width="800" height="600">
     `);
   
     instance.show();
   
-    // Додаємо обробник події для клавіші Escape на об'єкт document
     document.addEventListener("keydown", onEscapePress);
   }
   
   function onEscapePress(event) {
     if (event.key === "Escape" && instance) {
+
       instance.close();
+      document.removeEventListener("keydown", onEscapePress);
     }
   }
   
   gallery.addEventListener("click", onGalleryClick);
+  
